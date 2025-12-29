@@ -1,0 +1,2045 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dijital Adabı Muaşeret + Dijital Vicdan (Sınıf İçi Uygulama)</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --bg2:#070b14;
+      --card:#121b2f;
+      --card2:#0f1730;
+      --text:#e8eefc;
+      --muted:#b8c3e6;
+      --line:#243255;
+      --ok:#3ddc97;
+      --bad:#ff5c7a;
+      --accent:#49b6ff;
+      --accent2:#29d7a2;
+      --warn:#ffd86b;
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 20% 0%, #16244a 0%, var(--bg) 45%, var(--bg2) 100%);
+    }
+    .wrap{max-width:1180px;margin:0 auto;padding:18px}
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:14px 14px; border:1px solid var(--line); border-radius:18px;
+      background:linear-gradient(180deg,#121b2f,#0e1528);
+      box-shadow: var(--shadow);
+    }
+    .brand{display:flex; align-items:center; gap:12px;}
+    .logo{
+      width:34px;height:34px;border-radius:12px;
+      background: conic-gradient(from 180deg, #49b6ff, #29d7a2, #8b7bff, #49b6ff);
+      border:1px solid rgba(255,255,255,.15);
+    }
+    .brand h1{font-size:15.5px;margin:0}
+    .brand .sub{font-size:12.5px;color:var(--muted);margin-top:2px}
+    .brand .grant{font-size:11.8px;color:rgba(232,238,252,.78);margin-bottom:4px}
+    .right{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end;}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px; border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--muted); font-size:13px;
+    }
+    .btn{
+      cursor:pointer;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:var(--card2);
+      color:var(--text);
+      font-weight:700;
+    }
+    .btn:hover{filter:brightness(1.08)}
+    .btn.green{background:rgba(41,215,162,.14); border-color:rgba(41,215,162,.35)}
+    .btn.blue{background:rgba(73,182,255,.14); border-color:rgba(73,182,255,.35)}
+    .btn.ghost{background:rgba(255,255,255,.02)}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+
+    .page{margin-top:14px}
+    .grid{display:grid; grid-template-columns: 1fr 1fr; gap:14px;}
+    @media(max-width:980px){ .grid{grid-template-columns:1fr} }
+
+    .section{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:linear-gradient(180deg,#121b2f,#0e1528);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .sectionHead{
+      padding:14px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+    }
+    .sectionHead h2{margin:0;font-size:16px}
+    .sectionHead p{margin:4px 0 0;color:var(--muted);font-size:12.5px}
+    .progress{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end; color:var(--muted); font-size:12.5px;}
+    .bar{width:180px; height:10px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.03); overflow:hidden;}
+    .fill{height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--accent2));}
+
+    .cards{padding:14px; display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+    @media(max-width:650px){ .cards{grid-template-columns:1fr} }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:rgba(255,255,255,.03);
+      padding:14px;
+    }
+    .cardTitle{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;}
+    .cardTitle .name{font-weight:900; font-size:15.5px}
+    .chip{
+      font-size:12px; color:var(--muted);
+      border:1px solid var(--line);
+      padding:6px 8px; border-radius:999px;
+      background:rgba(255,255,255,.02);
+      white-space:nowrap;
+    }
+    .cardBtns{display:flex; gap:10px; flex-wrap:wrap}
+    .miniBtn{
+      flex:1; min-width:140px;
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#0f1730;
+      font-weight:800;
+      cursor:pointer;
+      color:var(--text);
+    }
+    .miniBtn:hover{filter:brightness(1.08)}
+    .miniBtn.primary{background:rgba(41,215,162,.14); border-color:rgba(41,215,162,.35)}
+    .miniBtn.secondary{background:rgba(73,182,255,.14); border-color:rgba(73,182,255,.35)}
+    .miniBtn.tertiary{background:rgba(255,216,107,.10); border-color:rgba(255,216,107,.25)}
+    .meta{margin-top:10px; color:var(--muted); font-size:12.5px; display:flex; gap:10px; flex-wrap:wrap;}
+    .meta .m{border:1px solid var(--line); border-radius:999px; padding:6px 8px; background:rgba(255,255,255,.02);}
+
+    /* Modal */
+    .overlay{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.6);
+      display:none;
+      align-items:center; justify-content:center;
+      padding:16px;
+      z-index:999;
+    }
+    .modal{
+      width:min(980px, 100%);
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,#121b2f,#0e1528);
+      box-shadow: 0 18px 50px rgba(0,0,0,.55);
+      overflow:hidden;
+    }
+    .modalHead{
+      padding:14px 16px;
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+      border-bottom:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+    }
+    .modalHead h3{margin:0;font-size:16px}
+    .modalHead .crumb{color:var(--muted); font-size:12.5px; margin-top:4px}
+    .modalBody{padding:16px}
+    .close{background:transparent;border:1px solid var(--line)}
+
+    .twoCol{display:grid; grid-template-columns: 1.05fr .95fr; gap:12px}
+    @media(max-width:900px){ .twoCol{grid-template-columns:1fr} }
+    .panel{border:1px solid var(--line); background:rgba(255,255,255,.03); border-radius:16px; padding:14px;}
+    .panel h4{margin:0 0 8px;font-size:14.5px}
+    .panel p{margin:0;color:var(--muted);line-height:1.55}
+    .list{margin:10px 0 0; padding-left:18px; color:var(--muted)}
+    .list li{margin:6px 0}
+
+    /* Quiz */
+    .quizTop{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+    .score{font-weight:900}
+    .qbox{margin-top:10px; border:1px solid var(--line); border-radius:16px; background:#0f1730; padding:14px;}
+    .qrow{display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center}
+    .qrow .qn{font-weight:900}
+    .qtext{margin:10px 0 12px;font-size:17px;line-height:1.35}
+    .choices{display:grid; grid-template-columns:1fr; gap:10px;}
+    @media(min-width:760px){ .choices{grid-template-columns:1fr 1fr} }
+    .choice{
+      text-align:left; cursor:pointer;
+      border:1px solid var(--line);
+      background:#0b1220;
+      color:var(--text);
+      padding:12px;
+      border-radius:14px;
+      font-weight:800;
+    }
+    .choice:hover{filter:brightness(1.08)}
+    .choice:disabled{opacity:.65;cursor:not-allowed}
+    .feedback{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+    }
+    .feedback.ok{border-color:rgba(61,220,151,.45); background:rgba(61,220,151,.08)}
+    .feedback.bad{border-color:rgba(255,92,122,.45); background:rgba(255,92,122,.08)}
+    .navBtns{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; margin-top:12px}
+    .toast{
+      margin-top:10px; padding:10px 12px;
+      border-radius:14px; border:1px solid var(--line);
+      background:rgba(255,255,255,.03); color:var(--muted);
+    }
+
+    /* Mini game */
+    .matchGrid{display:grid; grid-template-columns: 1fr; gap:10px; margin-top:10px}
+    .matchRow{display:grid; grid-template-columns: 1fr 1fr; gap:10px; align-items:center;}
+    @media(max-width:700px){ .matchRow{grid-template-columns:1fr} }
+    select{
+      width:100%;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#0b1220;
+      color:var(--text);
+      font-weight:800;
+    }
+    .small{font-size:12.5px;color:var(--muted)}
+
+    /* Name */
+    .field{
+      width:100%;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#0b1220;
+      color:var(--text);
+      font-weight:800;
+      outline:none;
+    }
+
+    /* CERTIFICATE (white theme) */
+    .certArea{padding:6px;}
+    .certOuter{
+      background: #ffffff;
+      color:#0b1220;
+      border-radius:18px;
+      border: 10px solid #f1f5ff;
+      box-shadow: 0 18px 50px rgba(0,0,0,.22);
+      padding:22px;
+      position:relative;
+      overflow:hidden;
+    }
+    .certOuter:before{
+      content:"";
+      position:absolute; inset:14px;
+      border-radius:14px;
+      border:2px solid #d7e3ff;
+      pointer-events:none;
+    }
+    .certOuter:after{
+      content:"";
+      position:absolute; inset:-120px;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(73,182,255,.18), transparent 55%),
+        radial-gradient(circle at 85% 25%, rgba(41,215,162,.14), transparent 55%),
+        radial-gradient(circle at 40% 95%, rgba(139,123,255,.12), transparent 55%);
+      pointer-events:none;
+    }
+    .certPaper{
+      position:relative;
+      border-radius:14px;
+      border:1px solid #e7efff;
+      background: linear-gradient(180deg, #ffffff, #fbfdff);
+      padding:26px 24px;
+      overflow:hidden;
+    }
+    .certRibbon{
+      position:absolute; right:-60px; top:18px;
+      transform:rotate(15deg);
+      background: linear-gradient(90deg, #49b6ff, #29d7a2);
+      color:#08203a;
+      padding:10px 70px;
+      font-weight:900;
+      border-radius:999px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.12);
+      font-size:12px;
+      letter-spacing:.3px;
+    }
+    .certHeader{
+      display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:flex-start;
+    }
+    .certMark{
+      display:flex; align-items:center; gap:10px;
+    }
+    .certSeal{
+      width:46px;height:46px;border-radius:14px;
+      background: conic-gradient(from 180deg, #49b6ff, #29d7a2, #8b7bff, #49b6ff);
+      border:1px solid rgba(0,0,0,.08);
+    }
+    .certHeader small{color:#3a4d78}
+    .certTitle{
+      margin:14px 0 6px;
+      font-size:28px;
+      font-weight:1000;
+      letter-spacing:.6px;
+    }
+    .certLine{
+      height:2px; width:120px; background: linear-gradient(90deg, #49b6ff, #29d7a2);
+      border-radius:999px;
+      margin:8px 0 14px;
+    }
+    .certText{color:#22324f; line-height:1.6; margin:0;}
+    .certName{
+      margin:18px 0 6px;
+      font-size:22px;
+      font-weight:1000;
+      display:inline-block;
+      padding-bottom:6px;
+      border-bottom:2px solid #cfe0ff;
+    }
+    .certMeta{
+      margin-top:14px;
+      display:flex; gap:10px; flex-wrap:wrap;
+    }
+    .certPill{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid #d7e3ff;
+      background:#f6f9ff;
+      color:#2a3b63;
+      font-size:12.5px;
+      font-weight:800;
+    }
+    .certFooter{
+      margin-top:22px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+      align-items:end;
+    }
+    @media(max-width:700px){ .certFooter{grid-template-columns:1fr} }
+    .sigBox{
+      border-top:1px solid #d7e3ff;
+      padding-top:10px;
+      color:#2a3b63;
+      font-size:12.5px;
+      font-weight:700;
+    }
+
+    /* Print only certificate */
+    @media print{
+      body{background:#fff;color:#000}
+      .wrap, .topbar, .page, .overlay .modalHead, .noPrint{display:none !important;}
+      .overlay{display:block !important; position:static !important; background:#fff !important; padding:0 !important;}
+      .modal{box-shadow:none !important; border:none !important; width:100% !important;}
+      .modalBody{padding:0 !important;}
+      .certOuter{box-shadow:none !important;}
+      @page{size:A4; margin:14mm;}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <div class="grant">Bu uygulama TÜBİTAK 2204-B Ortaokul Öğrencileri Araştırma Projeleri Yarışması kapsamında hazırlanmıştır.</div>
+        <h1>İletişim Becerileri & Dijital Vicdan</h1>
+        <div class="sub">Ortaokul • Sınıf içi uygulama</div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="pill" id="userPill">👤 <b id="userName">—</b></div>
+      <div class="pill">Genel ilerleme: <b id="overallPct">0%</b></div>
+      <button class="btn ghost" id="resetAllBtn" type="button">Sıfırla</button>
+      <button class="btn green" id="certificateBtn" type="button" disabled>Sertifikam</button>
+    </div>
+  </header>
+
+  <section class="page grid">
+    <div class="section">
+      <div class="sectionHead">
+        <div>
+          <h2>Dijital Adabı Muaşeret</h2>
+          <p>Telefon, E-posta, WhatsApp, Sosyal Medya, Online Toplantı</p>
+        </div>
+        <div class="progress">
+          <div class="pill">Modül tamamlanma: <b id="netiquettePct">0%</b></div>
+          <div class="bar"><div class="fill" id="netiquetteFill"></div></div>
+        </div>
+      </div>
+      <div class="cards" id="netiquetteCards"></div>
+    </div>
+
+    <div class="section">
+      <div class="sectionHead">
+        <div>
+          <h2>Dijital Vicdan</h2>
+          <p>Empati • Mahremiyet • Şeffaflık • Sorumluluk • Adalet</p>
+        </div>
+        <div class="progress">
+          <div class="pill">Modül tamamlanma: <b id="consciencePct">0%</b></div>
+          <div class="bar"><div class="fill" id="conscienceFill"></div></div>
+        </div>
+      </div>
+      <div class="cards" id="conscienceCards"></div>
+    </div>
+  </section>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modalHead noPrint">
+      <div>
+        <h3 id="modalTitle">Başlık</h3>
+        <div class="crumb" id="modalCrumb">Bölüm</div>
+      </div>
+      <button class="btn close" id="closeBtn" type="button">Kapat</button>
+    </div>
+    <div class="modalBody" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  // ============ yardımcı ============
+  const LETTERS = ["A","B","C","D"];
+  const STORE_KEY = "netiquette_conscience_app_v3";
+  const USER_KEY  = "netiquette_conscience_user_v1";
+
+  const clamp = (x,min,max)=>Math.max(min, Math.min(max,x));
+  const escapeHtml = (str)=> String(str)
+      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  const escapeAttr = (str)=> String(str)
+      .replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+
+  // =====================================================
+  // SENARYO MODELİ
+  // - Her soru: { q, why, options:[ {t, ok:true/false}, ...4 ] }
+  // - Render sırasında options KARMA (rastgele) -> A/B/C/D atanır
+  // =====================================================
+
+  const MODULES = [
+    // ===== Dijital Adabı Muaşeret =====
+    {
+      id:"phone", group:"netiquette", title:"Telefon Adabı",
+      info:{ intro:"Telefonla iletişimde saygı; zamanlama, ses tonu, kısa ve net konuşma, uygun ortam seçimi gibi davranışları içerir.",
+        bullets:["Uygun saatte ara / mesaj at.","Konuşmadan önce kısaca selamla ve kendini tanıt.","Kalabalıkta yüksek sesle konuşma.","Gerekirse geri arayacağını söyle, ısrar etme.","Telefonu ders/toplantıda sessize al."]},
+      principles:[
+        {k:"Uygun zaman", v:"Geç saatlerde aramamak, gerekirse mesaj bırakmak"},
+        {k:"Kısa ve net konuşma", v:"Konuyu uzatmamak, asıl nedeni söylemek"},
+        {k:"Saygılı hitap", v:"Selamla başlamak, teşekkürle bitirmek"},
+        {k:"Ortam farkındalığı", v:"Kalabalıkta sesini kısmak"},
+        {k:"Geri arama disiplini", v:"Müsait değilse uygun zamanda dönüş yapmak"},
+        {k:"Gizlilik", v:"Başkalarının yanında özel konuşmaları açmamak"}
+      ],
+      scenarios:[
+        { q:"Ders esnasında telefonun çalıyor. En doğru davranış?",
+          why:"Dersi bölmemek ve uygun zamanda geri dönmek saygıdır.",
+          options:[
+            {t:"Hemen kapatıp sonra geri dönmek", ok:true},
+            {t:"Açıp konuşmak", ok:false},
+            {t:"Hoparlöre almak", ok:false},
+            {t:"Sınıfta dolaşmak", ok:false}
+          ]
+        },
+        { q:"Tanımadığın bir numara aradı, müsait değilsin. Ne yaparsın?",
+          why:"Kısa bilgi vermek iletişimi düzenler.",
+          options:[
+            {t:"Kısa mesajla dönüş zamanı bildiririm", ok:true},
+            {t:"Açıp bağırırım", ok:false},
+            {t:"Defalarca çaldırırım", ok:false},
+            {t:"Açmadan engellerim", ok:false}
+          ]
+        },
+        { q:"Otobüste yüksek sesle konuşmak…",
+          why:"Ortam farkındalığı nezakettir.",
+          options:[
+            {t:"Rahatsız edebilir, kısık sesle konuşmalıyım", ok:true},
+            {t:"Normal", ok:false},
+            {t:"Gerekli", ok:false},
+            {t:"Daha iyi duyulsun diye bağırmalıyım", ok:false}
+          ]
+        },
+        { q:"Birini aradın, açmadı. Ne yapmalısın?",
+          why:"Israr rahatsız edebilir; makul tekrar/doğru kanal iyidir.",
+          options:[
+            {t:"Uygun süre sonra tekrar denemek veya mesaj bırakmak", ok:true},
+            {t:"10 kez üst üste aramak", ok:false},
+            {t:"Hemen şikayet etmek", ok:false},
+            {t:"Telefonunu kapatmak", ok:false}
+          ]
+        },
+        { q:"Konuşmanın sonunda ne yapılmalı?",
+          why:"Nazik kapanış iletişim adabıdır.",
+          options:[
+            {t:"Teşekkür edip iyi dileklerle bitirmek", ok:true},
+            {t:"Kapat", ok:false},
+            {t:"Konuyu değiştirip uzatmak", ok:false},
+            {t:"Karşı tarafı suçlamak", ok:false}
+          ]
+        },
+        { q:"Telefon görüşmesinde kimin konuştuğu belli olmalı mı?",
+          why:"Kendini tanıtmak güven ve saygı sağlar.",
+          options:[
+            {t:"Evet, kendimi tanıtmalıyım", ok:true},
+            {t:"Gerek yok", ok:false},
+            {t:"Sadece bağırmak yeter", ok:false},
+            {t:"Numara zaten görünüyor", ok:false}
+          ]
+        },
+        { q:"Arkadaşınla konuşurken öğretmenin soru sordu. Ne yaparsın?",
+          why:"Öncelik ders; dikkat ve saygı.",
+          options:[
+            {t:"Telefonu sessize alıp dersi dinlemek", ok:true},
+            {t:"Konuşmaya devam", ok:false},
+            {t:"Hoparlör açmak", ok:false},
+            {t:"Sınıftan çıkıp konuşmak", ok:false}
+          ]
+        },
+        { q:"Telefonla bir şey isterken en uygun ifade?",
+          why:"Rica dili nezakettir.",
+          options:[
+            {t:"Lütfen… rica ederim.", ok:true},
+            {t:"Hemen yap!", ok:false},
+            {t:"Zorundasın", ok:false},
+            {t:"Beni dinle!", ok:false}
+          ]
+        },
+        { q:"Müsait olmayan birini uzun konuşmaya zorlamak…",
+          why:"Zaman sınırına saygı.",
+          options:[
+            {t:"Saygısız olabilir", ok:true},
+            {t:"Doğru", ok:false},
+            {t:"Normal", ok:false},
+            {t:"Gerekli", ok:false}
+          ]
+        },
+        { q:"Telefonu ortak alanda şarj ederken en doğrusu?",
+          why:"Ortak alan adabı.",
+          options:[
+            {t:"Güvenli yere koyup kimseyi engellememek", ok:true},
+            {t:"Kabloyu ortada bırakmak", ok:false},
+            {t:"Kimseye sormadan priz kapmak", ok:false},
+            {t:"Başkalarının kablosunu çekmek", ok:false}
+          ]
+        }
+      ]
+    },
+
+    {
+      id:"email", group:"netiquette", title:"E-Posta Adabı",
+      info:{ intro:"E-postada konu satırı, saygılı hitap, yapılandırılmış metin ve ek/yanıt yönetimi önemlidir.",
+        bullets:["Konu satırı net ve kısa olsun.","Saygılı hitapla başla, nazik kapanışla bitir.","Kısa paragraf / maddeleme kullan.","Tamamı BÜYÜK HARF yazma (bağırma etkisi).","Ekleri adıyla an, amacını belirt.","Yanıtla-tüm kullanımında bilinçli ol."]},
+      principles:[
+        {k:"Net konu", v:"Konuya tarih/anahtar ifade eklemek"},
+        {k:"Uygun hitap", v:"‘Merhaba Öğretmenim’ gibi"},
+        {k:"Yapılandırma", v:"Kısa paragraf ve maddeleme"},
+        {k:"Ek bilgilendirme", v:"Ekin adı + ne için olduğu"},
+        {k:"Büyük harf", v:"Sadece çok gerekli durumlarda"},
+        {k:"Yanıtla-tüm", v:"Yalnız gerekli kişilere göndermek"}
+      ],
+      scenarios:[
+        { q:"Duyuru için e-posta atacaksın. Konu satırı nasıl olmalı?",
+          why:"Konu satırı içeriği net özetlemeli.",
+          options:[
+            {t:"Etkinlik İzni Talebi – 12 Kasım", ok:true},
+            {t:"Acil", ok:false},
+            {t:"Soru", ok:false},
+            {t:"(boş)", ok:false},
+          ]
+        },
+        { q:"E-postaya başlarken en uygun ifade?",
+          why:"Resmi/saygılı hitap uygun.",
+          options:[
+            {t:"Merhaba Öğretmenim,", ok:true},
+            {t:"Heey!", ok:false},
+            {t:"Naber", ok:false},
+            {t:"Selam", ok:false},
+          ]
+        },
+        { q:"E-postada uzun tek paragraf yerine…",
+          why:"Okunabilirlik artar.",
+          options:[
+            {t:"Maddeleme ve kısa paragraflar", ok:true},
+            {t:"Hiç boşluk bırakma", ok:false},
+            {t:"Sadece emoji", ok:false},
+            {t:"Caps lock", ok:false},
+          ]
+        },
+        { q:"Ek dosya gönderiyorsun. Ne yapmalısın?",
+          why:"Şeffaflık ve düzen.",
+          options:[
+            {t:"Ekin adını ve amacını yaz", ok:true},
+            {t:"Boş e-posta gönder", ok:false},
+            {t:"Konuya ‘EK’ yaz yeter", ok:false},
+            {t:"Eki açıklamadan yolla", ok:false},
+          ]
+        },
+        { q:"YANITLA-TÜM ne zaman?",
+          why:"Gereksiz bildirim önlenir.",
+          options:[
+            {t:"Herkesin bilmesi gerekiyorsa", ok:true},
+            {t:"Her zaman", ok:false},
+            {t:"Asla", ok:false},
+            {t:"Sadece arkadaşlara", ok:false},
+          ]
+        },
+        { q:"Tümü büyük harf yazmak…",
+          why:"Ton algısı.",
+          options:[
+            {t:"Bağırma gibi algılanabilir", ok:true},
+            {t:"Şık", ok:false},
+            {t:"Daha etkili", ok:false},
+            {t:"Sorun değil", ok:false},
+          ]
+        },
+        { q:"Kapanış için en uygun?",
+          why:"Nazik kapanış.",
+          options:[
+            {t:"Teşekkür ederim, iyi günler.", ok:true},
+            {t:"Bye", ok:false},
+            {t:"Ok.", ok:false},
+            {t:"Görüşürüz", ok:false},
+          ]
+        },
+        { q:"Çok kişiye mail atarken gizlilik için…",
+          why:"E-posta adresleri korunur.",
+          options:[
+            {t:"BCC kullanmayı düşünmek", ok:true},
+            {t:"Konu boş", ok:false},
+            {t:"Ek yok", ok:false},
+            {t:"Herkesi CC", ok:false},
+          ]
+        },
+        { q:"E-postada amaç ne olmalı?",
+          why:"İletişim netleşir.",
+          options:[
+            {t:"Net ve kısa", ok:true},
+            {t:"Belirsiz", ok:false},
+            {t:"Uzun hikaye", ok:false},
+            {t:"Sadece şikayet", ok:false},
+          ]
+        },
+        { q:"Yanlış kişiye mail attın. Ne yaparsın?",
+          why:"Sorumluluk.",
+          options:[
+            {t:"Nazikçe düzeltme maili at", ok:true},
+            {t:"Yok say", ok:false},
+            {t:"Herkese gönder", ok:false},
+            {t:"Caps ile bağır", ok:false},
+          ]
+        }
+      ]
+    },
+
+    {
+      id:"whatsapp", group:"netiquette", title:"WhatsApp Adabı",
+      info:{ intro:"Mesajlaşmada zamanlama, kısa ve anlaşılır yazma, grup kuralları ve mahremiyet önemlidir.",
+        bullets:["Geç saatlerde gereksiz mesaj atma.","Sesli mesajı zorunlu olmadıkça kullanma.","Grup mesajlarını konu dışına taşırma.","Okundu/çevrim içi baskısı kurma.","Özel mesaj/ekran görüntüsü paylaşma."]},
+      principles:[
+        {k:"Zamanlama", v:"Uygun saatlerde yazmak"},
+        {k:"Kısa ileti", v:"Tek mesajda net anlatmak"},
+        {k:"Grup adabı", v:"Konu dışı spam yapmamak"},
+        {k:"Baskı kurmamak", v:"Okundu diye ısrar etmemek"},
+        {k:"Mahremiyet", v:"Ekran görüntüsü/mesaj paylaşmamak"},
+        {k:"Emoji dengesi", v:"Uygun ve ölçülü kullanmak"}
+      ],
+      scenarios:[
+        { q:"Gece geç saatte ‘Nasılsın?’ yazmak…",
+          why:"Zamanlama saygıdır.",
+          options:[
+            {t:"Gerekmedikçe uygun değil", ok:true},
+            {t:"Normal", ok:false},
+            {t:"Şart", ok:false},
+            {t:"En iyisi", ok:false},
+          ]
+        },
+        { q:"Grup konuşması ders grubuyken…",
+          why:"Amaç dışına çıkmamak.",
+          options:[
+            {t:"Konuya uygun yazmak", ok:true},
+            {t:"Spam", ok:false},
+            {t:"Sürekli şaka", ok:false},
+            {t:"Caps", ok:false},
+          ]
+        },
+        { q:"Arkadaşın mesajı gördü ama cevaplamadı. Ne yaparsın?",
+          why:"Baskı kurmamak.",
+          options:[
+            {t:"Biraz beklerim", ok:true},
+            {t:"Herkese şikayet", ok:false},
+            {t:"Israrla yazarım", ok:false},
+            {t:"Linç", ok:false},
+          ]
+        },
+        { q:"Birinin mesajını izinsiz paylaşmak…",
+          why:"Özel ileti korunur.",
+          options:[
+            {t:"Yanlış, mahremiyeti bozar", ok:true},
+            {t:"Olur", ok:false},
+            {t:"Komik", ok:false},
+            {t:"Gerekli", ok:false},
+          ]
+        },
+        { q:"Sesli mesaj kullanırken…",
+          why:"Karşı tarafın zamanı.",
+          options:[
+            {t:"Kısa tutarım, gerekliyse atarım", ok:true},
+            {t:"Çok uzun atarım", ok:false},
+            {t:"Hiç konuşmam", ok:false},
+            {t:"Bağırırım", ok:false},
+          ]
+        },
+        { q:"Yanlış kişiye mesaj attın. Ne yaparsın?",
+          why:"Sorumluluk ve nezaket.",
+          options:[
+            {t:"Hemen düzeltip özür dilerim", ok:true},
+            {t:"Yok say", ok:false},
+            {t:"Üstüne mesaj yağdır", ok:false},
+            {t:"Kız", ok:false},
+          ]
+        },
+        { q:"Gruba bir duyuru atarken…",
+          why:"Netlik.",
+          options:[
+            {t:"Kısa, net bilgi + tarih/saat", ok:true},
+            {t:"Sadece emoji", ok:false},
+            {t:"Belirsiz yaz", ok:false},
+            {t:"Caps", ok:false},
+          ]
+        },
+        { q:"Görüşme sırasında…",
+          why:"Ortam adabı.",
+          options:[
+            {t:"Uygun değil, sonra yazmak", ok:true},
+            {t:"Şart", ok:false},
+            {t:"Rahatsız değil", ok:false},
+            {t:"Sürekli mesaj", ok:false},
+          ]
+        },
+        { q:"Fotoğraf paylaşmadan önce…",
+          why:"Mahremiyet.",
+          options:[
+            {t:"İzin alırım", ok:true},
+            {t:"İzin sormam", ok:false},
+            {t:"Gizlice", ok:false},
+            {t:"Zorlarım", ok:false},
+          ]
+        },
+        { q:"Bir şeyi tekrar tekrar göndermek…",
+          why:"Rahatsız edebilir.",
+          options:[
+            {t:"Spam olabilir", ok:true},
+            {t:"İyi", ok:false},
+            {t:"Zorunlu", ok:false},
+            {t:"Komik", ok:false},
+          ]
+        }
+      ]
+    },
+
+    {
+      id:"social", group:"netiquette", title:"Sosyal Medya Adabı",
+      info:{ intro:"Paylaşımın etkisini düşünmek; saygı, doğruluk, mahremiyet ve nezaketi korumaktır.",
+        bullets:["Kaynağı doğrulamadan paylaşma.","Nefret/linç dilinden uzak dur.","Başkalarının fotoğrafını izinsiz paylaşma.","Yorumlarda saygılı dil kullan.","Kendi verilerini/konumunu gereksiz açma."]},
+      principles:[
+        {k:"Kaynak kontrolü", v:"Paylaşmadan doğrulamak"},
+        {k:"Saygılı dil", v:"Hakaret/alay yapmamak"},
+        {k:"Mahremiyet", v:"İzinsiz fotoğraf paylaşmamak"},
+        {k:"Dijital ayak izi", v:"Silinse bile iz kalabilir"},
+        {k:"Dezenformasyon", v:"Yanlış bilgiyi yaymamak"},
+        {k:"Bildirme", v:"Zorbalık/güvensiz içerikleri bildirmek"}
+      ],
+      scenarios:[
+        { q:"Kaynağından emin olmadığın haberi görüyorsun. Ne yaparsın?",
+          why:"En güvenlisi emin olmadan paylaşmamak.",
+          options:[
+            {t:"Emin olmadan asla paylaşmam", ok:true},
+            {t:"Hemen paylaşırım", ok:false},
+            {t:"İlgi çekiciyse paylaşırım", ok:false},
+            {t:"Beğeni sayısına bakarım", ok:false},
+          ]
+        },
+        { q:"Birine yönelik linç görüyorsun…",
+          why:"Zararı azaltmak sorumluluktur.",
+          options:[
+            {t:"Linçe karşı durur/bildiririm", ok:true},
+            {t:"Sessiz kalırım", ok:false},
+            {t:"Katılırım", ok:false},
+            {t:"Paylaşırım", ok:false},
+          ]
+        },
+        { q:"Başkasının fotoğrafını izinsiz paylaşmak…",
+          why:"Mahremiyet hakkı.",
+          options:[
+            {t:"Asla izinsiz paylaşmam", ok:true},
+            {t:"İnternetteyse olur", ok:false},
+            {t:"Tanıyorsam olur", ok:false},
+            {t:"Zorunluysa paylaşırım", ok:false},
+          ]
+        },
+        { q:"Yorum yazarken en doğrusu?",
+          why:"Saygı iletişimin temeli.",
+          options:[
+            {t:"Saygılı olmak", ok:true},
+            {t:"Kırıcı yazmak", ok:false},
+            {t:"Alay", ok:false},
+            {t:"Hakaret", ok:false},
+          ]
+        },
+        { q:"Konum paylaşımı…",
+          why:"Güvenlik/mahremiyet.",
+          options:[
+            {t:"Gerekli değilse paylaşmam", ok:true},
+            {t:"Her zaman paylaşırım", ok:false},
+            {t:"Umursamam", ok:false},
+            {t:"Herkes paylaşıyor", ok:false},
+          ]
+        },
+        { q:"Troll bir hesap seni kışkırtıyor. Ne yaparsın?",
+          why:"Çatışmayı büyütmemek.",
+          options:[
+            {t:"Engelle/bildir", ok:true},
+            {t:"Kavga ederim", ok:false},
+            {t:"Küfür ederim", ok:false},
+            {t:"Paylaşırım", ok:false},
+          ]
+        },
+        { q:"Yanlış bilgi paylaştığını fark ettin…",
+          why:"Şeffaflık ve sorumluluk.",
+          options:[
+            {t:"Düzeltir ve açıklarım", ok:true},
+            {t:"Kalsın", ok:false},
+            {t:"Silerim ama söylemem", ok:false},
+            {t:"Başkası yaptı derim", ok:false},
+          ]
+        },
+        { q:"Bir ürün tanıtımı ve hediye aldıysan…",
+          why:"Şeffaflık.",
+          options:[
+            {t:"Tanıtım olduğunu belirtirim", ok:true},
+            {t:"Gizlerim", ok:false},
+            {t:"Hiç söylemem", ok:false},
+            {t:"Sadece arkadaşa söylerim", ok:false},
+          ]
+        },
+        { q:"Arkadaşını etiketlemek için…",
+          why:"Rıza.",
+          options:[
+            {t:"İzin alıp etiketlemek", ok:true},
+            {t:"Her fotoğrafta etiketlemek", ok:false},
+            {t:"Zorla etiketlemek", ok:false},
+            {t:"Gizlice etiketlemek", ok:false},
+          ]
+        },
+        { q:"Şifre güvenliği için…",
+          why:"Güvenlik.",
+          options:[
+            {t:"Uzun karmaşık şifre", ok:true},
+            {t:"Aynı şifreyi her yerde kullanmak", ok:false},
+            {t:"123456", ok:false},
+            {t:"Doğum tarihi", ok:false},
+          ]
+        }
+      ]
+    },
+
+    {
+      id:"meeting", group:"netiquette", title:"Online Toplantı Adabı",
+      info:{ intro:"Çevrim içi toplantılarda hazırlık, mikrofon/kamera kullanımı, söz alma ve saygı önemlidir.",
+        bullets:["Zamanında bağlan, bağlantını önceden test et.","Konuşmadığında mikrofonu kapat.","Söz alırken el kaldır/izin iste.","Arka plan ve gürültüye dikkat et.","Toplantı linkini izinsiz paylaşma."]},
+      principles:[
+        {k:"Zamanında katılım", v:"Erken bağlanıp test yapmak"},
+        {k:"Mikrofon disiplini", v:"Konuşmuyorken kapalı"},
+        {k:"Söz alma", v:"Sıraya saygı"},
+        {k:"Gürültü kontrolü", v:"Sessiz ortam seçmek"},
+        {k:"Görünüm/arka plan", v:"Dikkat dağıtmamak"},
+        {k:"Gizlilik", v:"Link/ekran izinsiz paylaşmamak"}
+      ],
+      scenarios:[
+        { q:"Toplantıda konuşmadığın anda…",
+          why:"Gürültüyü azaltır.",
+          options:[
+            {t:"Mikrofon kapalı", ok:true},
+            {t:"Mikrofon açık", ok:false},
+            {t:"Müzik aç", ok:false},
+            {t:"Ekranı kapat", ok:false},
+          ]
+        },
+        { q:"Toplantıya geç kaldın. En doğrusu?",
+          why:"Nezaket ve düzen.",
+          options:[
+            {t:"Girer girmez özür ve kısa açıklama", ok:true},
+            {t:"Hiç girmem", ok:false},
+            {t:"Bağırırım", ok:false},
+            {t:"Sohbet açarım", ok:false},
+          ]
+        },
+        { q:"Söz almak için…",
+          why:"Sıra adabı.",
+          options:[
+            {t:"El kaldır / izin iste", ok:true},
+            {t:"Araya gir", ok:false},
+            {t:"Mikrofonu aç bağır", ok:false},
+            {t:"Sohbeti spamla", ok:false},
+          ]
+        },
+        { q:"Toplantı linkini…",
+          why:"Gizlilik.",
+          options:[
+            {t:"Yalnız ilgili kişilere", ok:true},
+            {t:"Herkese atarım", ok:false},
+            {t:"Sosyal medyada paylaşırım", ok:false},
+            {t:"Bilinmeyene atarım", ok:false},
+          ]
+        },
+        { q:"Arka planda gürültü varsa…",
+          why:"Saygı.",
+          options:[
+            {t:"Sessize al / ortam değiştir", ok:true},
+            {t:"Sorun değil", ok:false},
+            {t:"Daha çok konuş", ok:false},
+            {t:"Mikrofonu aç", ok:false},
+          ]
+        },
+        { q:"Kamera için en doğrusu?",
+          why:"Dikkat ve saygı.",
+          options:[
+            {t:"Uygun ortam/ışık, gerekirse kapatma izni", ok:true},
+            {t:"Sürekli oynat", ok:false},
+            {t:"İstediğim gibi", ok:false},
+            {t:"Filtre", ok:false},
+          ]
+        },
+        { q:"Ekran paylaşırken…",
+          why:"Mahremiyet.",
+          options:[
+            {t:"Sadece gerekli pencereyi paylaş", ok:true},
+            {t:"Her şeyi aç", ok:false},
+            {t:"Bildirimler açık", ok:false},
+            {t:"Gizli dosyalar", ok:false},
+          ]
+        },
+        { q:"Toplantı bitince…",
+          why:"Nazik kapanış.",
+          options:[
+            {t:"Teşekkür edip çıkmak", ok:true},
+            {t:"Hemen çık", ok:false},
+            {t:"Bağır", ok:false},
+            {t:"Spam", ok:false},
+          ]
+        },
+        { q:"Toplantı kaydı alınacaksa…",
+          why:"Şeffaflık/mahremiyet.",
+          options:[
+            {t:"Bilgi verilip izin alınmalı", ok:true},
+            {t:"Gizlice", ok:false},
+            {t:"Hiç söyleme", ok:false},
+            {t:"Zorla", ok:false},
+          ]
+        },
+        { q:"Sohbet bölümünü…",
+          why:"Amaç uygunluğu.",
+          options:[
+            {t:"Gerekli soru/yanıt için", ok:true},
+            {t:"Konu dışı kullanırım", ok:false},
+            {t:"Spam", ok:false},
+            {t:"Hakaret", ok:false},
+          ]
+        }
+      ]
+    },
+
+    // ===== Dijital Vicdan =====
+    {
+      id:"empathy", group:"conscience", title:"Dijital Empati",
+      info:{ intro:"Dijital empati; çevrim içi ortamda başkalarının duygularını anlamak, incitmemek ve destek olmaktır.",
+        bullets:["Yorum yazmadan önce ‘Bu söz onu nasıl hissettirir?’ diye düşün.","Alay/etiketleme yerine yapıcı dil kullan.","Zorbalığa katılma; gerekirse bildir ve destek ol.","Herkesin dijital sınırlarına saygı duy."]},
+      principles:[
+        {k:"Duygu farkındalığı", v:"Yazmadan önce etkisini düşünmek"},
+        {k:"Yapıcı dil", v:"Eleştiriyi saygıyla yapmak"},
+        {k:"Zorbalığa karşı duruş", v:"Bildirmek ve destek olmak"},
+        {k:"Sınır saygısı", v:"Israrcı olmamak"},
+        {k:"Kapsayıcılık", v:"Dışlamamak"},
+        {k:"Onarım", v:"Hata yaptıysan özür/düzeltme"}
+      ],
+      scenarios:[
+        { q:"Bir arkadaşın paylaşımına kırıcı yorumlar geliyor. Ne yaparsın?",
+          why:"Empati ve sorumluluk.",
+          options:[
+            {t:"Destek olur, gerekirse bildiririm", ok:true},
+            {t:"Ben de eklerim", ok:false},
+            {t:"Görmezden gelirim", ok:false},
+            {t:"Paylaşırım", ok:false},
+          ]
+        },
+        { q:"Birine şaka yaptın ama üzüldü. En doğru?",
+          why:"Empati onarım ister.",
+          options:[
+            {t:"Özür diler, düzeltirim", ok:true},
+            {t:"Abartıyor", ok:false},
+            {t:"Daha çok şaka", ok:false},
+            {t:"Engellerim", ok:false},
+          ]
+        },
+        { q:"Grup sohbetinde birini dışlıyorlar…",
+          why:"Kapsayıcı olmak.",
+          options:[
+            {t:"Dışlamaya karşı çıkarım", ok:true},
+            {t:"Katılırım", ok:false},
+            {t:"Sessiz kalırım", ok:false},
+            {t:"Dalga geçerim", ok:false},
+          ]
+        },
+        { q:"Biri çevrim içi değilse…",
+          why:"Sınır saygısı.",
+          options:[
+            {t:"Beklerim, uygun zamanda yazarım", ok:true},
+            {t:"Şikayet", ok:false},
+            {t:"Sürekli yazıp ararım", ok:false},
+            {t:"Linç", ok:false},
+          ]
+        },
+        { q:"Eleştiri yaparken…",
+          why:"Yapıcı dil.",
+          options:[
+            {t:"Saygılı ve çözüm odaklı", ok:true},
+            {t:"Hakaret", ok:false},
+            {t:"Alay", ok:false},
+            {t:"Caps", ok:false},
+          ]
+        },
+        { q:"Birinin hatasını ifşa etmek…",
+          why:"Onur/itibar.",
+          options:[
+            {t:"Empatiye aykırı olabilir", ok:true},
+            {t:"İyi", ok:false},
+            {t:"Şart", ok:false},
+            {t:"Eğlence", ok:false},
+          ]
+        },
+        { q:"Bir arkadaşın kötü hissediyor ve mesaj attı…",
+          why:"Destek ve güvenlik.",
+          options:[
+            {t:"Destek mesajı ver, gerekirse yetişkine haber ver", ok:true},
+            {t:"Paylaş", ok:false},
+            {t:"Dalga geç", ok:false},
+            {t:"Görmezden gel", ok:false},
+          ]
+        },
+        { q:"Bir fotoğrafı paylaşmadan önce…",
+          why:"Rıza ve empati.",
+          options:[
+            {t:"İzin alırım", ok:true},
+            {t:"Sormam", ok:false},
+            {t:"Gizlice", ok:false},
+            {t:"Zorla", ok:false},
+          ]
+        },
+        { q:"Yorumlarda tartışma büyüyor…",
+          why:"Duygu yönetimi.",
+          options:[
+            {t:"Sakinleştir / uzaklaş", ok:true},
+            {t:"Kışkırt", ok:false},
+            {t:"Hakaret", ok:false},
+            {t:"Spam", ok:false},
+          ]
+        },
+        { q:"Empati için en kısa kural?",
+          why:"Empatinin özü.",
+          options:[
+            {t:"Karşı tarafın duygusunu düşün", ok:true},
+            {t:"Önce ben", ok:false},
+            {t:"Daha sert", ok:false},
+            {t:"Umursama", ok:false},
+          ]
+        }
+      ]
+    },
+
+    {
+      id:"privacy", group:"conscience", title:"Dijital Mahremiyet",
+      info:{ intro:"Mahremiyet; kişisel bilgilerin kontrolünü, izinleri yönetmeyi ve başkasının özelini korumayı içerir.",
+        bullets:["Gereksiz uygulama izinlerini kapat.","Şifreleri güçlü ve farklı kullan; mümkünse 2 adımlı doğrulama.","Konum/kimlik bilgisi gibi özel bilgileri paylaşma.","Başkasının mesajını/fotoğrafını izinsiz paylaşma."]},
+      principles:[
+        {k:"İzin kontrolü", v:"Kamera/mikrofon/konum gereksizse kapat"},
+        {k:"Şifre güvenliği", v:"Uzun + karmaşık + farklı"},
+        {k:"Veri minimizasyonu", v:"Gereksiz bilgi paylaşmamak"},
+        {k:"Rıza", v:"İzin almadan paylaşmamak"},
+        {k:"Güvenli bağlantı", v:"Şüpheli linklere tıklamamak"},
+        {k:"Hesap koruma", v:"2 adımlı doğrulama"}
+      ],
+      scenarios:[
+        { q:"Uygulama mikrofon+konum istiyor. En doğru?",
+          why:"Mahremiyet için kontrol şart.",
+          options:[
+            {t:"Neden istediğine bak, gereksizse verme", ok:true},
+            {t:"Hemen kabul", ok:false},
+            {t:"Okumadan geç", ok:false},
+            {t:"Herkes veriyor", ok:false},
+          ]
+        },
+        { q:"Arkadaşının özel mesajını paylaşmak…",
+          why:"Özel ileti korunur.",
+          options:[
+            {t:"Yanlış; güven ve mahremiyeti bozar", ok:true},
+            {t:"Komik", ok:false},
+            {t:"Normal", ok:false},
+            {t:"Yakınlara olur", ok:false},
+          ]
+        },
+        { q:"Güçlü şifre hangisi?",
+          why:"Tahmin edilmesi zor olmalı.",
+          options:[
+            {t:"Harf+sayı+sembol uzun şifre", ok:true},
+            {t:"123456", ok:false},
+            {t:"Doğum tarihi", ok:false},
+            {t:"adsoyad2025", ok:false},
+          ]
+        },
+        { q:"Konum paylaşımı için…",
+          why:"Güvenlik.",
+          options:[
+            {t:"Gerekli değilse paylaşmam", ok:true},
+            {t:"Her zaman", ok:false},
+            {t:"Umursamam", ok:false},
+            {t:"Herkes paylaşıyor", ok:false},
+          ]
+        },
+        { q:"Şüpheli link gelirse…",
+          why:"Kimlik avı riski.",
+          options:[
+            {t:"Tıklamam, doğrularım", ok:true},
+            {t:"Tıklarım", ok:false},
+            {t:"Arkadaşlara yollarım", ok:false},
+            {t:"Gizlice açarım", ok:false},
+          ]
+        },
+        { q:"2 adımlı doğrulama…",
+          why:"Ek güvenlik.",
+          options:[
+            {t:"Hesabı korur", ok:true},
+            {t:"Zarar", ok:false},
+            {t:"Gereksiz", ok:false},
+            {t:"Sadece yetişkin", ok:false},
+          ]
+        },
+        { q:"Okul adı/numara paylaşmak…",
+          why:"Veri minimizasyonu.",
+          options:[
+            {t:"Gereksizse paylaşmamak iyi", ok:true},
+            {t:"Şart", ok:false},
+            {t:"Herkes yazar", ok:false},
+            {t:"Sorun değil", ok:false},
+          ]
+        },
+        { q:"Fotoğraf etiketlemeden önce…",
+          why:"Rıza.",
+          options:[
+            {t:"İzin alırım", ok:true},
+            {t:"Zorlarım", ok:false},
+            {t:"Gizlice", ok:false},
+            {t:"Sormam", ok:false},
+          ]
+        },
+        { q:"Ortak bilgisayarda hesabın açık kaldı…",
+          why:"Güvenlik.",
+          options:[
+            {t:"Çıkış yaparım", ok:true},
+            {t:"Kalsın", ok:false},
+            {t:"Şifreyi yazarım", ok:false},
+            {t:"Umursamam", ok:false},
+          ]
+        },
+        { q:"Mahremiyetin temel fikri?",
+          why:"Kontrol bilinci.",
+          options:[
+            {t:"Bilgi kontrolü sende olsun", ok:true},
+            {t:"Her şeyi paylaş", ok:false},
+            {t:"Gizli yok", ok:false},
+            {t:"Boş", ok:false},
+          ]
+        }
+      ]
+    },
+
+    {
+      id:"transparency", group:"conscience", title:"Dijital Şeffaflık",
+      info:{ intro:"Şeffaflık; doğru bilgi vermek, kaynak belirtmek, hata olunca düzeltmek ve AI/iş birliği gibi durumları açıkça söylemektir.",
+        bullets:["Kaynağı belirsiz bilgiyi kesinmiş gibi sunma.","Yapay zekâ ile üretildiyse belirt.","Yanlış paylaşımı fark edince düzelt ve açıkla.","Reklam/hediye/iş birliği varsa saklama."]},
+      principles:[
+        {k:"Kaynak", v:"Nereden biliyorum?"},
+        {k:"AI etiketi", v:"‘AI ile üretildi’ demek"},
+        {k:"Düzeltme", v:"Hata varsa açıklayıp düzeltmek"},
+        {k:"Reklam beyanı", v:"Tanıtımı belirtmek"},
+        {k:"Açıklık", v:"Belirsizliği belirtmek"},
+        {k:"Güven", v:"Şeffaflık güven oluşturur"}
+      ],
+      scenarios:[
+        { q:"AI görseli paylaşıyorsun. Ne yaparsın?",
+          why:"Şeffaflık.",
+          options:[
+            {t:"‘AI ile üretildi’ diye belirtirim", ok:true},
+            {t:"Söylemem", ok:false},
+            {t:"Sorulursa söylerim", ok:false},
+            {t:"Başkasının derim", ok:false},
+          ]
+        },
+        { q:"Kaynağı belirsiz bilgi paylaşırsan…",
+          why:"Yanlış bilgi yayılır.",
+          options:[
+            {t:"Dezenformasyon artar", ok:true},
+            {t:"Sorun olmaz", ok:false},
+            {t:"Herkes öğrenir", ok:false},
+            {t:"Gerekli", ok:false},
+          ]
+        },
+        { q:"Yanlış paylaşım yaptın. En doğrusu?",
+          why:"Güven için.",
+          options:[
+            {t:"Düzeltir ve açıklarım", ok:true},
+            {t:"Kalsın", ok:false},
+            {t:"Silerim susarım", ok:false},
+            {t:"Başkası yaptı", ok:false},
+          ]
+        },
+        { q:"Tanıtım için hediye aldıysan…",
+          why:"Dürüstlük.",
+          options:[
+            {t:"İş birliği/tanıtım olduğunu belirt", ok:true},
+            {t:"Gizle", ok:false},
+            {t:"Sadece arkadaşa", ok:false},
+            {t:"Hiç söyleme", ok:false},
+          ]
+        },
+        { q:"Bir bilgiden emin değilsen…",
+          why:"Açıklık.",
+          options:[
+            {t:"Belirsizliği belirt", ok:true},
+            {t:"Kesin de", ok:false},
+            {t:"Uydur", ok:false},
+            {t:"Caps", ok:false},
+          ]
+        },
+        { q:"Şeffaflık ne kazandırır?",
+          why:"Güven inşa eder.",
+          options:[
+            {t:"Güven", ok:true},
+            {t:"Zarar", ok:false},
+            {t:"Karmaşa", ok:false},
+            {t:"Kavga", ok:false},
+          ]
+        },
+        { q:"Kaynak belirtmek…",
+          why:"Doğrulanabilirlik.",
+          options:[
+            {t:"Güvenilirliği artırır", ok:true},
+            {t:"Yasak", ok:false},
+            {t:"Zayıflatır", ok:false},
+            {t:"Gereksiz", ok:false},
+          ]
+        },
+        { q:"AI içeriğini gizlemek…",
+          why:"Güven azalır.",
+          options:[
+            {t:"Şeffaf değil", ok:true},
+            {t:"Her zaman iyi", ok:false},
+            {t:"Önemli değil", ok:false},
+            {t:"Şart", ok:false},
+          ]
+        },
+        { q:"Bir hata yaptığında özür/düzeltme…",
+          why:"Vicdanlı davranış.",
+          options:[
+            {t:"Sorumluluk", ok:true},
+            {t:"Gereksiz", ok:false},
+            {t:"Yanlış", ok:false},
+            {t:"Zayıflık", ok:false},
+          ]
+        },
+        { q:"Şeffaflığın kısa kuralı?",
+          why:"Basit ilke.",
+          options:[
+            {t:"Açık ol", ok:true},
+            {t:"Gizle", ok:false},
+            {t:"Kışkırt", ok:false},
+            {t:"Umursama", ok:false},
+          ]
+        }
+      ]
+    },
+
+    {
+      id:"responsibility", group:"conscience", title:"Dijital Sorumluluk",
+      info:{ intro:"Dijital sorumluluk; doğru paylaşım, saygı, güvenlik, bildirim ve dijital ortamı iyileştirme katkısıdır.",
+        bullets:["Paylaşmadan önce kaynağı doğrula.","Zorbalığa katılma; bildir ve destek ol.","Kişisel bilgileri koru, şüpheli linklere tıklama.","Sahte hesap/uygunsuz içerikleri bildir."]},
+      principles:[
+        {k:"Doğrulama", v:"Kaynak kontrolü"},
+        {k:"Saygı", v:"Kırıcı içerikten kaçınma"},
+        {k:"Güvenlik", v:"Şifre/izin/kimlik avı farkındalığı"},
+        {k:"Bildirme", v:"Zararlı içeriklere karşı aksiyon"},
+        {k:"Dijital ayak izi", v:"Sonuçları düşünme"},
+        {k:"Örnek olma", v:"Pozitif rol model"}
+      ],
+      scenarios:[
+        { q:"Zorbalık görüyorsun. En uygun?",
+          why:"Zararı azaltır.",
+          options:[
+            {t:"Katılma + bildir + destek ol", ok:true},
+            {t:"Katıl", ok:false},
+            {t:"İzle", ok:false},
+            {t:"Paylaş", ok:false},
+          ]
+        },
+        { q:"Belirsiz haber paylaşmadan önce…",
+          why:"Doğrulama.",
+          options:[
+            {t:"Kontrol et, emin değilsen paylaşma", ok:true},
+            {t:"Paylaş", ok:false},
+            {t:"Beğeniye bak", ok:false},
+            {t:"Arkadaş attıysa doğru", ok:false},
+          ]
+        },
+        { q:"Birinin kişisel bilgisini paylaşmak…",
+          why:"Hak ihlali.",
+          options:[
+            {t:"Yanlış, güvenlik riski", ok:true},
+            {t:"Normal", ok:false},
+            {t:"Şaka", ok:false},
+            {t:"Yakına olur", ok:false},
+          ]
+        },
+        { q:"Arkadaşının hesabı çalınmış gibi. Ne yaparsın?",
+          why:"Güvenlik.",
+          options:[
+            {t:"Uyar, tıklama, gerekirse bildir", ok:true},
+            {t:"Linke tıkla", ok:false},
+            {t:"Yay", ok:false},
+            {t:"Boşver", ok:false},
+          ]
+        },
+        { q:"Sahte bir hesap seni etiketliyor…",
+          why:"Güvenlik ve huzur.",
+          options:[
+            {t:"Engelle/bildir", ok:true},
+            {t:"Takip et", ok:false},
+            {t:"Kavga et", ok:false},
+            {t:"Paylaş", ok:false},
+          ]
+        },
+        { q:"Küfürlü yorum yazmak…",
+          why:"Saygı bozulur.",
+          options:[
+            {t:"Sorumluluk değil", ok:true},
+            {t:"Herkes yapıyor", ok:false},
+            {t:"Normal", ok:false},
+            {t:"Gerekli", ok:false},
+          ]
+        },
+        { q:"Şüpheli uygulama izni…",
+          why:"Sorumlu seçim.",
+          options:[
+            {t:"Kontrol et", ok:true},
+            {t:"Umursama", ok:false},
+            {t:"Ver", ok:false},
+            {t:"Zorla", ok:false},
+          ]
+        },
+        { q:"Yanlış bilgi yaydığını fark ettin…",
+          why:"Sorumluluk.",
+          options:[
+            {t:"Düzelt", ok:true},
+            {t:"Kalsın", ok:false},
+            {t:"Gizle", ok:false},
+            {t:"Suçla", ok:false},
+          ]
+        },
+        { q:"Dijital ayak izi demek…",
+          why:"Kalıcı etki.",
+          options:[
+            {t:"Paylaşımlar iz bırakır", ok:true},
+            {t:"Hiç iz yok", ok:false},
+            {t:"Sadece oyun", ok:false},
+            {t:"Boş", ok:false},
+          ]
+        },
+        { q:"Sorumlu davranışın amacı?",
+          why:"Dijital vatandaşlık.",
+          options:[
+            {t:"Zarar vermemek", ok:true},
+            {t:"Spam", ok:false},
+            {t:"Manipülasyon", ok:false},
+            {t:"Kavga", ok:false},
+          ]
+        }
+      ]
+    },
+
+    {
+      id:"justice", group:"conscience", title:"Dijital Adalet",
+      info:{ intro:"Dijital adalet; çevrim içi ortamlarda ayrımcılık yapmamak, eşit katılım fırsatı vermek ve haksızlığa karşı durmaktır.",
+        bullets:["Kimseyi dili, görünüşü, ekonomik durumu vb. yüzünden dışlama.","Kurallar herkese eşit uygulansın.","Algoritmaların adaletsiz etkilerine karşı farkındalık geliştir.","Haksızlık gördüğünde itiraz/bildirim yap."]},
+      principles:[
+        {k:"Eşitlik", v:"Herkese aynı saygı"},
+        {k:"Ayrımcılığa karşı duruş", v:"Etiketleme/dışlama yok"},
+        {k:"Fırsat eşitliği", v:"Katılım hakkı"},
+        {k:"Kural adaleti", v:"Aynı kural, aynı uygulama"},
+        {k:"Algoritmik farkındalık", v:"Önyargı/filtre balonu"},
+        {k:"Savunuculuk", v:"Haksızlığa itiraz"}
+      ],
+      scenarios:[
+        { q:"Oyun takımına birini ‘yeni’ diye almıyorlar. Ne yaparsın?",
+          why:"Eşit katılım.",
+          options:[
+            {t:"Fırsat verilmesini savunurum", ok:true},
+            {t:"Ben de dışlarım", ok:false},
+            {t:"Sessiz kalırım", ok:false},
+            {t:"Dalga geçerim", ok:false},
+          ]
+        },
+        { q:"Kurallar bazılarına sert, bazılarına değil. Ne bozulur?",
+          why:"Eşitlik bozulur.",
+          options:[
+            {t:"Adalet ve güven", ok:true},
+            {t:"Hız", ok:false},
+            {t:"Eğlence", ok:false},
+            {t:"Hiç", ok:false},
+          ]
+        },
+        { q:"Algoritma hep aynı görüşü gösteriyor. Ne olabilir?",
+          why:"Fırsat eşitliği etkilenir.",
+          options:[
+            {t:"Erişim çeşitliliği azalır", ok:true},
+            {t:"İyi", ok:false},
+            {t:"Sorun yok", ok:false},
+            {t:"Adaletle ilgisiz", ok:false},
+          ]
+        },
+        { q:"Birinin dili/aksanıyla alay etmek…",
+          why:"Haksızlık.",
+          options:[
+            {t:"Ayrımcılık", ok:true},
+            {t:"Normal", ok:false},
+            {t:"Eğlence", ok:false},
+            {t:"Önemli değil", ok:false},
+          ]
+        },
+        { q:"Birini ekonomik durumu yüzünden küçümsemek…",
+          why:"Eşit saygı.",
+          options:[
+            {t:"Adalete aykırı", ok:true},
+            {t:"Olur", ok:false},
+            {t:"Komik", ok:false},
+            {t:"Gerekli", ok:false},
+          ]
+        },
+        { q:"Grup yöneticisi kuralları kendine uygulamıyor…",
+          why:"Kural adaleti.",
+          options:[
+            {t:"Adaletsiz", ok:true},
+            {t:"Normal", ok:false},
+            {t:"Gerekli", ok:false},
+            {t:"İyi", ok:false},
+          ]
+        },
+        { q:"Haksız ban yediğini düşünüyorsun. Ne yaparsın?",
+          why:"Hak arama.",
+          options:[
+            {t:"Nazikçe itiraz", ok:true},
+            {t:"Küfür", ok:false},
+            {t:"Spam", ok:false},
+            {t:"Hesap aç", ok:false},
+          ]
+        },
+        { q:"Engelli birine erişilebilirlik konusunda…",
+          why:"Fırsat eşitliği.",
+          options:[
+            {t:"Eşit erişimi destekle", ok:true},
+            {t:"Umursama", ok:false},
+            {t:"Dışla", ok:false},
+            {t:"Engelle", ok:false},
+          ]
+        },
+        { q:"Adalet için en kısa soru?",
+          why:"Eşitlik kontrolü.",
+          options:[
+            {t:"Herkese eşit mi?", ok:true},
+            {t:"Ben kazanayım", ok:false},
+            {t:"Kimse görmesin", ok:false},
+            {t:"Boş", ok:false},
+          ]
+        },
+        { q:"Dijital adaletin amacı?",
+          why:"Adil dijital kültür.",
+          options:[
+            {t:"Eşit ve adil ortam", ok:true},
+            {t:"Linç", ok:false},
+            {t:"Ayrımcılık", ok:false},
+            {t:"Karmaşa", ok:false},
+          ]
+        }
+      ]
+    }
+  ];
+
+  // ============ state ============
+  const defaultState = () => ({
+    modules: Object.fromEntries(MODULES.map(m => [m.id, {infoRead:false, scenarioBest:0, gameBest:0}])),
+  });
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORE_KEY);
+      if(!raw) return defaultState();
+      const parsed = JSON.parse(raw);
+      const st = defaultState();
+      for(const [k,v] of Object.entries(parsed.modules || {})){
+        if(st.modules[k]) st.modules[k] = {...st.modules[k], ...v};
+      }
+      return st;
+    }catch(e){ return defaultState(); }
+  }
+  function saveState(){
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+    renderProgress();
+  }
+  function loadUser(){
+    try{
+      const raw = localStorage.getItem(USER_KEY);
+      if(!raw) return {name:""};
+      const u = JSON.parse(raw);
+      return {name: (u.name || "").trim()};
+    }catch(e){ return {name:""}; }
+  }
+  function saveUser(name){
+    localStorage.setItem(USER_KEY, JSON.stringify({name: (name||"").trim()}));
+    user = loadUser();
+    renderUser();
+  }
+
+  let state = loadState();
+  let user  = loadUser();
+
+  // ============ UI ============
+  const netiquetteCards = document.getElementById("netiquetteCards");
+  const conscienceCards  = document.getElementById("conscienceCards");
+
+  function moduleMeta(m){
+    const s = state.modules[m.id];
+    return {
+      info: s.infoRead ? "Bilgi: ✓" : "Bilgi: 0/1",
+      scen: `Senaryo: ${s.scenarioBest}/10`,
+      game: `Mini Oyun: ${s.gameBest}/6`
+    };
+  }
+  function createCard(m){
+    const meta = moduleMeta(m);
+    const el = document.createElement("div");
+    el.className = "card";
+    el.innerHTML = `
+      <div class="cardTitle">
+        <div class="name">${m.title}</div>
+        <div class="chip">${m.group === "netiquette" ? "Dijital Adabı Muaşeret" : "Dijital Vicdan"}</div>
+      </div>
+      <div class="cardBtns">
+        <button class="miniBtn tertiary" data-action="info" data-id="${m.id}">📘 Bilgi</button>
+        <button class="miniBtn secondary" data-action="scen" data-id="${m.id}">🧩 Senaryolar (10)</button>
+        <button class="miniBtn primary" data-action="game" data-id="${m.id}">🎮 Mini Oyunlar</button>
+      </div>
+      <div class="meta">
+        <div class="m">${meta.info}</div>
+        <div class="m">${meta.scen}</div>
+        <div class="m">${meta.game}</div>
+      </div>
+    `;
+    return el;
+  }
+  function renderCards(){
+    netiquetteCards.innerHTML = "";
+    conscienceCards.innerHTML = "";
+    MODULES.forEach(m => {
+      const card = createCard(m);
+      (m.group === "netiquette" ? netiquetteCards : conscienceCards).appendChild(card);
+    });
+  }
+
+  // ============ modal ============
+  const overlay = document.getElementById("overlay");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalCrumb = document.getElementById("modalCrumb");
+  const modalBody  = document.getElementById("modalBody");
+  const closeBtn   = document.getElementById("closeBtn");
+
+  function openModal(title, crumb, html, lockClose=false){
+    modalTitle.textContent = title;
+    modalCrumb.textContent = crumb;
+    modalBody.innerHTML = html;
+    overlay.style.display = "flex";
+    closeBtn.style.display = lockClose ? "none" : "inline-block";
+    overlay.dataset.lock = lockClose ? "1" : "0";
+  }
+  function closeModal(){
+    overlay.style.display = "none";
+    modalBody.innerHTML = "";
+    closeBtn.style.display = "inline-block";
+    overlay.dataset.lock = "0";
+  }
+  closeBtn.addEventListener("click", closeModal);
+  overlay.addEventListener("click", (e)=>{
+    if(e.target !== overlay) return;
+    if(overlay.dataset.lock === "1") return;
+    closeModal();
+  });
+  function getModuleById(id){ return MODULES.find(m => m.id === id); }
+
+  // ============ Bilgi ============
+  function showInfo(m){
+    const list = m.info.bullets.map(x => `<li>${escapeHtml(x)}</li>`).join("");
+    const html = `
+      <div class="twoCol">
+        <div class="panel">
+          <h4>📘 Temel Bilgiler</h4>
+          <p>${escapeHtml(m.info.intro)}</p>
+          <ul class="list">${list}</ul>
+        </div>
+
+        <div class="panel">
+          <h4>✅ Tamamlandı İşaretle</h4>
+          <p class="small">Bu buton, bu modülün “Bilgi” bölümünü okuduğunu işaretler.</p>
+          <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn green" id="markInfoBtn">${state.modules[m.id].infoRead ? "Bilgi ✓ (Tamamlandı)" : "Bilgiyi Okudum"}</button>
+            <button class="btn ghost" id="unmarkInfoBtn" ${state.modules[m.id].infoRead ? "" : "disabled"}>Geri Al</button>
+          </div>
+          <div class="toast"><b>Not:</b> “Bilgiyi Okudum” işaretleyince ilerleme güncellenir.</div>
+        </div>
+      </div>
+    `;
+    openModal(m.title, (m.group==="netiquette" ? "Dijital Adabı Muaşeret • Bilgi" : "Dijital Vicdan • Bilgi"), html);
+    document.getElementById("markInfoBtn").addEventListener("click", ()=>{
+      state.modules[m.id].infoRead = true;
+      saveState(); renderCards(); showInfo(m);
+    });
+    document.getElementById("unmarkInfoBtn").addEventListener("click", ()=>{
+      state.modules[m.id].infoRead = false;
+      saveState(); renderCards(); showInfo(m);
+    });
+  }
+
+  // ============ Senaryo (seçenekler her soruda KARMA) ============
+  function showScenarios(m){
+    let idx = 0, score = 0, locked = false;
+
+    function render(){
+      const q = m.scenarios[idx];
+
+      // seçenekleri her açılışta karıştır
+      const mixed = shuffle(q.options).map((opt, i)=>({
+        label: LETTERS[i],
+        text: opt.t,
+        ok: opt.ok
+      }));
+
+      const correctLabel = mixed.find(x => x.ok)?.label || "?";
+
+      const html = `
+        <div class="panel">
+          <div class="quizTop">
+            <div class="pill">Soru <b>${idx+1}</b> / 10</div>
+            <div class="pill">Puan: <b class="score">${score}</b></div>
+            <div class="pill">En iyi: <b>${state.modules[m.id].scenarioBest}</b> / 10</div>
+          </div>
+
+          <div class="qbox">
+            <div class="qrow">
+              <div class="qn">Senaryo Sorusu</div>
+              <div class="pill">İlerleme: <b>${idx}</b> / 10</div>
+            </div>
+
+            <div class="qtext">${escapeHtml(q.q)}</div>
+            <div class="choices" id="choices"></div>
+            <div class="feedback" id="fb" style="display:none;"></div>
+
+            <div class="navBtns">
+              <button class="btn ghost" id="restart">Baştan Başla</button>
+              <button class="btn blue" id="next" disabled>Sonraki</button>
+            </div>
+          </div>
+
+          <div class="toast"><b>Kurallar:</b> Her doğru <b>+1</b>. 10 soru bitince “en iyi” puan kaydedilir.</div>
+        </div>
+      `;
+
+      openModal(m.title, (m.group==="netiquette" ? "Dijital Adabı Muaşeret • Senaryolar" : "Dijital Vicdan • Senaryolar"), html);
+
+      const choicesEl = document.getElementById("choices");
+      const fb = document.getElementById("fb");
+      const nextBtn = document.getElementById("next");
+
+      mixed.forEach(item=>{
+        const btn = document.createElement("button");
+        btn.className = "choice";
+        btn.textContent = `${item.label}) ${item.text}`;
+        btn.addEventListener("click", ()=>{
+          if(locked) return;
+          locked = true;
+
+          const ok = item.ok;
+          if(ok) score += 1;
+
+          [...choicesEl.querySelectorAll("button")].forEach(b=>b.disabled = true);
+
+          fb.style.display = "block";
+          fb.classList.remove("ok","bad");
+          fb.classList.add(ok ? "ok" : "bad");
+          fb.innerHTML = `
+            <div><b>${ok ? "✅ Doğru!" : "❌ Yanlış!"}</b></div>
+            <div class="small" style="margin-top:6px;">
+              Doğru cevap: <b>${correctLabel}</b> • Gerekçe: ${escapeHtml(q.why)}
+            </div>
+          `;
+          nextBtn.disabled = false;
+        });
+        choicesEl.appendChild(btn);
+      });
+
+      document.getElementById("restart").addEventListener("click", ()=>{
+        idx = 0; score = 0; locked = false;
+        render();
+      });
+
+      nextBtn.addEventListener("click", ()=>{
+        locked = false;
+        idx += 1;
+        if(idx >= 10){
+          const best = state.modules[m.id].scenarioBest;
+          if(score > best){
+            state.modules[m.id].scenarioBest = score;
+            saveState();
+            renderCards();
+          }
+          showScenarioFinish(m, score);
+        }else{
+          render();
+        }
+      });
+    }
+
+    render();
+  }
+
+  function showScenarioFinish(m, score){
+    const bestNow = state.modules[m.id].scenarioBest;
+    const html = `
+      <div class="panel">
+        <h4>🎉 Senaryolar Bitti!</h4>
+        <p>Puanın: <b>${score}</b> / 10</p>
+        <p class="small">En iyi puanın: <b>${bestNow}</b> / 10</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;justify-content:flex-end;" class="noPrint">
+          <button class="btn ghost" id="again">Tekrar Çöz</button>
+          <button class="btn green" id="close">Kapat</button>
+        </div>
+      </div>
+    `;
+    openModal(m.title, (m.group==="netiquette" ? "Dijital Adabı Muaşeret • Senaryolar" : "Dijital Vicdan • Senaryolar"), html);
+    document.getElementById("again").addEventListener("click", ()=>showScenarios(m));
+    document.getElementById("close").addEventListener("click", closeModal);
+  }
+
+  // ============ Mini oyun ============
+  function showMiniGame(m){
+    const left = m.principles.slice(0,6);
+    const right = left.map(p => p.v);
+    const shuffled = shuffle(right);
+    const letters = ["A","B","C","D","E","F"];
+    const options = shuffled.map((txt, i)=> ({letter: letters[i], text: txt}));
+
+    function renderGame(resultText=""){
+      const rows = left.map((p, i) => {
+        const optHtml = options.map(o => `<option value="${o.letter}">${o.letter}) ${escapeHtml(o.text)}</option>`).join("");
+        return `
+          <div class="matchRow">
+            <div class="pill" style="justify-content:flex-start;width:100%;border-radius:14px;padding:12px;">
+              <b>${i+1})</b> ${escapeHtml(p.k)}
+            </div>
+            <select id="sel_${i}">
+              <option value="">A-F seç</option>
+              ${optHtml}
+            </select>
+          </div>
+        `;
+      }).join("");
+
+      const keyMap = new Map();
+      left.forEach((p, i)=>{
+        const found = options.find(o => o.text === p.v);
+        keyMap.set(i, found.letter);
+      });
+
+      const html = `
+        <div class="twoCol">
+          <div class="panel">
+            <h4>🎮 Eşleştirme Oyunu (1 → A-F)</h4>
+            <p class="small">Soldaki ilkeleri sağdaki uygulama örnekleriyle eşleştir. (Örn: 1 → C)</p>
+
+            <div class="matchGrid">${rows}</div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;justify-content:flex-end;" class="noPrint">
+              <button class="btn ghost" id="shuffle">Karıştır</button>
+              <button class="btn blue" id="check">Kontrol Et</button>
+            </div>
+
+            ${resultText ? `<div class="toast" id="resultBox">${resultText}</div>` : `<div class="toast" id="resultBox" style="display:none;"></div>`}
+          </div>
+
+          <div class="panel">
+            <h4>🏆 Puanlama</h4>
+            <p class="small">
+              Doğru eşleşme sayın <b>/6</b> olarak kaydedilir. En iyi skorun:
+              <b>${state.modules[m.id].gameBest}</b> / 6
+            </p>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;justify-content:flex-end;" class="noPrint">
+              <button class="btn green" id="close">Kapat</button>
+            </div>
+          </div>
+        </div>
+      `;
+      openModal(m.title, (m.group==="netiquette" ? "Dijital Adabı Muaşeret • Mini Oyun" : "Dijital Vicdan • Mini Oyun"), html);
+
+      document.getElementById("close").addEventListener("click", closeModal);
+      document.getElementById("shuffle").addEventListener("click", ()=>showMiniGame(m));
+      document.getElementById("check").addEventListener("click", ()=>{
+        let correct = 0;
+        const used = new Set();
+        for(let i=0;i<left.length;i++){
+          const sel = document.getElementById("sel_"+i);
+          const val = sel.value;
+          if(!val) continue;
+          if(used.has(val)) continue;
+          used.add(val);
+          if(val === keyMap.get(i)) correct += 1;
+        }
+        if(correct > state.modules[m.id].gameBest){
+          state.modules[m.id].gameBest = correct;
+          saveState(); renderCards();
+        }
+        const msg = `<b>Sonuç:</b> ${correct} / 6 doğru eşleştirme ✅`;
+        renderGame(msg);
+      });
+    }
+    renderGame();
+  }
+
+  // ============ İlerleme ============
+  function calcModuleScore(m){
+    const s = state.modules[m.id];
+    const info = s.infoRead ? 1 : 0;
+    const scen = clamp(s.scenarioBest, 0, 10);
+    const game = clamp(s.gameBest, 0, 6);
+    return info + scen + game;
+  }
+  function calcGroupPct(group){
+    const mods = MODULES.filter(m => m.group === group);
+    const max = mods.length * 17;
+    const cur = mods.reduce((sum,m)=>sum+calcModuleScore(m),0);
+    return max ? Math.round((cur/max)*100) : 0;
+  }
+  function calcOverallPct(){
+    const max = MODULES.length * 17;
+    const cur = MODULES.reduce((sum,m)=>sum+calcModuleScore(m),0);
+    return max ? Math.round((cur/max)*100) : 0;
+  }
+
+  const certificateBtn = document.getElementById("certificateBtn");
+  function renderProgress(){
+    const nPct = calcGroupPct("netiquette");
+    const cPct = calcGroupPct("conscience");
+    const oPct = calcOverallPct();
+
+    document.getElementById("netiquettePct").textContent = nPct + "%";
+    document.getElementById("consciencePct").textContent = cPct + "%";
+    document.getElementById("overallPct").textContent = oPct + "%";
+
+    document.getElementById("netiquetteFill").style.width = nPct + "%";
+    document.getElementById("conscienceFill").style.width = cPct + "%";
+
+    certificateBtn.disabled = oPct < 80;
+    certificateBtn.textContent = (oPct < 80) ? "Sertifikam (80% gerekli)" : "Sertifikam";
+  }
+
+  // ============ kullanıcı ============
+  function renderUser(){
+    const name = (user.name || "").trim();
+    document.getElementById("userName").textContent = name ? name : "İsim girilmedi";
+  }
+  function openNamePrompt(force=false){
+    const current = (user.name || "").trim();
+    if(current && !force) return;
+
+    const html = `
+      <div class="twoCol">
+        <div class="panel">
+          <h4>👤 İsim Bilgisi</h4>
+          <p>Bu bilgi, uygulama içinde ve sertifikada kullanılacaktır.</p>
+          <div class="toast"><b>Not:</b> İstersen daha sonra sertifika ekranından ismi düzenleyebilirsin.</div>
+        </div>
+        <div class="panel">
+          <h4>İsim Soyisim</h4>
+          <input id="nameInput" class="field" placeholder="Örn: Nadir Aksoy" value="" />
+          <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;margin-top:12px;">
+            <button class="btn blue" id="saveName">Kaydet</button>
+          </div>
+          <p class="small" style="margin-top:10px;">Kaydetmeden devam edebilirsin; ancak sertifika için isim gerekir.</p>
+        </div>
+      </div>
+    `;
+    openModal("Başlangıç", "Genel • Kullanıcı Bilgisi", html, true);
+    document.getElementById("saveName").addEventListener("click", ()=>{
+      const v = (document.getElementById("nameInput").value || "").trim();
+      saveUser(v);
+      closeModal();
+      renderProgress();
+    });
+  }
+
+  // ============ Sertifika ============
+  certificateBtn.addEventListener("click", ()=>{
+    const pct = calcOverallPct();
+    if(pct < 80) return;
+
+    const today = new Date();
+    const d = today.toLocaleDateString("tr-TR", {year:"numeric", month:"long", day:"numeric"});
+    const name = (user.name || "—");
+
+    const html = `
+      <div class="certArea">
+        <div class="certOuter" id="certPrintable">
+          <div class="certPaper">
+            <div class="certRibbon">BAŞARI SERTİFİKASI</div>
+
+            <div class="certHeader">
+              <div class="certMark">
+                <div class="certSeal" aria-hidden="true"></div>
+                <div>
+                  <div style="font-weight:1000;font-size:13px;">TÜBİTAK 2204-B • Okul Projesi</div>
+                  <small>İletişim Becerileri & Dijital Vicdan • Sınıf içi uygulama</small>
+                </div>
+              </div>
+              <div class="certMeta">
+                <div class="certPill">Başarı: <b>${pct}%</b></div>
+                <div class="certPill">Tarih: <b>${escapeHtml(d)}</b></div>
+              </div>
+            </div>
+
+            <div class="certTitle">SERTİFİKA</div>
+            <div class="certLine"></div>
+
+            <p class="certText">
+              Bu belge, <b>Dijital Adabı Muaşeret</b> (Telefon, E-posta, WhatsApp, Sosyal Medya, Online Toplantı) ve
+              <b>Dijital Vicdan</b> (Empati, Mahremiyet, Şeffaflık, Sorumluluk, Adalet) modüllerini kapsayan web tabanlı
+              sınıf içi uygulamada; bilgi içerikleri, senaryo soruları ve mini oyun etkinliklerini başarıyla tamamladığını göstermektedir.
+            </p>
+
+            <div class="certName">${escapeHtml(name)}</div>
+
+            <p class="certText">
+              Bu çalışma, <b>değerler eğitimi</b> odağında; dijital ortamda saygılı iletişim kurma ve vicdanlı dijital vatandaşlık
+              davranışlarını güçlendirmeyi hedefleyen uygulamalı bir süreç olarak yürütülmüştür.
+            </p>
+
+            <div class="certFooter">
+              <div class="sigBox"><b>Danışman / Öğretmen</b><br/>İmza</div>
+              <div class="sigBox" style="text-align:right;"><b>Okul / Kurum</b><br/>Mühür / Onay</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;margin-top:12px;" class="noPrint">
+          <button class="btn ghost" id="editName">İsmi Düzenle</button>
+          <button class="btn blue" id="downloadPdf">PDF olarak indir</button>
+          <button class="btn green" id="closeCert">Kapat</button>
+        </div>
+
+        <div class="toast noPrint">
+          <b>PDF:</b> Açılan yazdır penceresinde “Hedef / Yazıcı” kısmından <b>PDF olarak kaydet</b> seçebilirsin.
+        </div>
+      </div>
+    `;
+    openModal("Sertifikam", "Genel • Sertifika", html);
+
+    document.getElementById("closeCert").addEventListener("click", closeModal);
+    document.getElementById("editName").addEventListener("click", ()=>{
+      closeModal();
+      openNamePrompt(true);
+    });
+
+    // PDF: tarayıcının print -> PDF kaydet
+    document.getElementById("downloadPdf").addEventListener("click", ()=>{
+      window.print();
+    });
+  });
+
+  // ============ reset ============
+  document.getElementById("resetAllBtn").addEventListener("click", ()=>{
+    state = defaultState();
+    saveState();
+    renderCards();
+  });
+
+  // ============ events ============
+  document.addEventListener("click", (e)=>{
+    const btn = e.target.closest("[data-action][data-id]");
+    if(!btn) return;
+    const id = btn.getAttribute("data-id");
+    const action = btn.getAttribute("data-action");
+    const m = getModuleById(id);
+    if(!m) return;
+
+    if(action==="info") showInfo(m);
+    if(action==="scen") showScenarios(m);
+    if(action==="game") showMiniGame(m);
+  });
+
+  // ============ init ============
+  renderUser();
+  renderCards();
+  renderProgress();
+  openNamePrompt(true);
+
+  // ============ persist ============
+  function saveUser(name){
+    localStorage.setItem(USER_KEY, JSON.stringify({name: (name||"").trim()}));
+    user = loadUser();
+    renderUser();
+  }
+  function saveState(){
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+    renderProgress();
+  }
+})();
+</script>
+</body>
+</html>
